@@ -13,13 +13,13 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import space.gavinklfong.insurance.quotation.apiclients.models.Customer;
 import space.gavinklfong.insurance.quotation.apiclients.models.Product;
 import space.gavinklfong.insurance.quotation.dtos.QuotationReq;
 import space.gavinklfong.insurance.quotation.models.Quotation;
 import space.gavinklfong.insurance.quotation.repositories.QuotationRepository;
 
-import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Map;
@@ -28,6 +28,7 @@ import java.util.Optional;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class QuotationSteps {
@@ -36,9 +37,6 @@ public class QuotationSteps {
 
     @Autowired
     WireMockServer wireMockServer;
-
-//    @Autowired
-//    QuotationSrvClient quotationSrvClient;
 
     @Autowired
     QuotationRepository quotationRepository;
@@ -61,6 +59,7 @@ public class QuotationSteps {
 
         Map<String, String> dataMap = dataTable.asMap(String.class, String.class);
 
+        // Construct product
         Product product = Product.builder()
                 .productCode(DEFAULT_PRODUCT_CODE)
                 .productClass("Online")
@@ -82,12 +81,14 @@ public class QuotationSteps {
                 .listedPrice(Long.parseLong(dataMap.get("listPrice")))
                 .build();
 
+        // Set up Product API Stub
         wireMockServer.stubFor(get(urlEqualTo(String.format("/products/%s", DEFAULT_PRODUCT_CODE)))
                 .willReturn(aResponse()
-                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .withBody(objectMapper.writeValueAsString(product)))
         );
 
+        // Save product to context
         testContext.setProduct(product);
     }
 
@@ -104,10 +105,11 @@ public class QuotationSteps {
         // Set up Customer API Stub
         wireMockServer.stubFor(get(urlEqualTo(String.format("/customers/%s", DEFAULT_CUSTOMER_ID)))
                 .willReturn(aResponse()
-                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .withBody(this.objectMapper.writeValueAsString(customer)))
         );
 
+        // Save customer to context
         testContext.setCustomer(customer);
     }
 
@@ -141,8 +143,11 @@ public class QuotationSteps {
     @Then("a quotation is saved in database")
     public void a_quotation_is_saved_in_database() {
         Quotation quotation = testContext.getQuotation();
-        Optional<Quotation> quotationFromRepo = quotationRepository.findById(quotation.getQuotationCode());
-
+        Optional<Quotation> quotationFromRepoOptional = quotationRepository.findById(quotation.getQuotationCode());
+        assertTrue(quotationFromRepoOptional.isPresent());
+        Quotation quotationFromRepo = quotationFromRepoOptional.get();
+        assertThat(quotationFromRepo.getQuotationCode(), equalTo(quotation.getQuotationCode()));
+        assertThat(quotationFromRepo.getAmount(), equalTo(quotation.getAmount()));
     }
 
 }

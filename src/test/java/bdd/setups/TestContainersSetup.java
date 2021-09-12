@@ -1,4 +1,4 @@
-package bdd;
+package bdd.setups;
 
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -16,23 +16,10 @@ public class TestContainersSetup {
     private static final Logger MONGODB_LOGGER = LoggerFactory.getLogger("container.MongoDB");
     private static final MongoDBContainer mongoDBContainer = new MongoDBContainer(MONGODB_IMAGE).withExposedPorts(MONGODB_PORT);
 
-    private static final int EUREKA_PORT = 8761;
-    private static GenericContainer eurekaServer = new GenericContainer("springcloud/eureka").withExposedPorts(EUREKA_PORT);
-    private static final Logger EUREKA_LOGGER = LoggerFactory.getLogger("container.Euraka");
-
-    static void initTestContainers(ConfigurableEnvironment configEnv) {
-
-//        Startables.deepStart(Stream.of(eurekaServer)).join();
-//        eurekaServer.start();
-//        eurekaServer.followOutput(new Slf4jLogConsumer(EUREKA_LOGGER));
-
-
+    public static void initTestContainers(ConfigurableEnvironment configEnv) {
         mongoDBContainer.start();
         mongoDBContainer.followOutput(new Slf4jLogConsumer(MONGODB_LOGGER));
     }
-
-    public static String getEurekaServerHost() { return eurekaServer.getContainerIpAddress(); }
-    public static int getEurekaServerPort() { return eurekaServer.getFirstMappedPort(); };
 
     public static String getMongoDBContainerUri() {
         return mongoDBContainer.getReplicaSetUrl();

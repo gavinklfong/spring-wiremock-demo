@@ -24,6 +24,9 @@ public class CucumberTestContext {
     private String quotationSrvUrl;
 
     public void reset() {
-
+        quotation = null;
+        quotationReq = null;
+        product = null;
+        customer = null;
     }
 }

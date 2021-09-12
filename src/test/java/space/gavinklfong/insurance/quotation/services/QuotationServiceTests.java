@@ -55,13 +55,12 @@ class QuotationServiceTests {
     private final long CUSTOMER_ID = 1L;
     private final long LISTED_PRICE = 1500L;
 
+    private final int HIGH_RISK_AGE = 70;
+    private final double HIGH_RISK_AGE_ADJ_RATE = 1.5;
+    private final double POST_CODE_DISCOUNT_RATE = 0.3;
     private final String[] PRODUCT_POST_CODE = {"SW20", "SM1", "E12" };
 
-    private final int HIGH_RISK_AGE = 70;
 
-    private final double HIGH_RISK_AGE_ADJ_RATE = 1.5;
-
-    private final double POST_CODE_DISCOUNT_RATE = 0.3;
 
     private final Product PRODUCT = Product.builder()
             .productCode(PRODUCT_CODE)

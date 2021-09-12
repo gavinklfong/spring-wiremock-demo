@@ -18,13 +18,7 @@ import java.util.List;
 @Component
 public class CustomerSrvClientImpl implements CustomerSrvClient {
 
-//    @Value("${app.customerSrv}")
-//    private String customerSrvName;
-
     private String customerSrvUrl;
-
-//    @Autowired
-//    private DiscoveryClient discoveryClient;
 
     public CustomerSrvClientImpl(@Value("${app.customerSrvUrl}") String url) {
         customerSrvUrl = url;
@@ -33,10 +27,6 @@ public class CustomerSrvClientImpl implements CustomerSrvClient {
     @Override
     public List<Customer> getCustomers(Long id) throws IOException {
 
-//        Optional<String> optionalServiceUrl = getServiceUrl(customerSrvName);
-//        if (optionalServiceUrl.isEmpty()) throw new ServiceNotAvailableException(customerSrvName);
-//
-//        WebClient webClient = WebClient.create(optionalServiceUrl.get());
         WebClient webClient = WebClient.create(customerSrvUrl);
         return webClient.get()
                 .uri("/customers/" + id)
@@ -49,9 +39,6 @@ public class CustomerSrvClientImpl implements CustomerSrvClient {
     }
 
     public Customer saveCustomer(Customer customer) {
-//        Optional<String> optionalServiceUrl = getServiceUrl(customerSrvName);
-//        if (optionalServiceUrl.isEmpty()) throw new ServiceNotAvailableException(customerSrvName);
-//        WebClient webClient = WebClient.create(optionalServiceUrl.get());
 
         WebClient webClient = WebClient.create(customerSrvUrl);
         Mono<Customer> savedCustomer = webClient.post()
@@ -63,12 +50,4 @@ public class CustomerSrvClientImpl implements CustomerSrvClient {
         return savedCustomer.block();
     }
 
-//    private Optional<String> getServiceUrl(String srvName) {
-//        List<ServiceInstance> list = discoveryClient.getInstances(srvName);
-//        if (list != null && list.size() > 0) {
-//            int selectedIndex = (int) (Math.random() * list.size());
-//            return Optional.of(list.get(selectedIndex).getUri().toString());
-//        }
-//        return Optional.empty();
-//    }
 }

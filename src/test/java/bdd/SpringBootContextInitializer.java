@@ -1,10 +1,12 @@
 package bdd;
 
+import bdd.setups.TestContainersSetup;
+import bdd.setups.WireMockSetup;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import static bdd.TestContainersSetup.getMongoDBContainerUri;
+import static bdd.setups.TestContainersSetup.getMongoDBContainerUri;
 
 public class SpringBootContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
@@ -17,7 +19,6 @@ public class SpringBootContextInitializer implements ApplicationContextInitializ
         WireMockSetup.registerComponent(configurableApplicationContext);
 
         TestPropertyValues values = TestPropertyValues.of(
-//                "eureka.client.serviceUrl.defaultZone=http://" + getEurekaServerHost() + ":" + getEurekaServerPort() + "/eureka",
                 "spring.data.mongodb.uri=" + getMongoDBContainerUri(),
                 "app.customerSrvUrl=" + WireMockSetup.getBaseUrl(),
                 "app.productSrvUrl=" + WireMockSetup.getBaseUrl()

@@ -1,4 +1,4 @@
-package bdd;
+package bdd.setups;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -24,5 +24,7 @@ public class WireMockSetup {
     public static String getBaseUrl() {
         return wireMockServer.baseUrl();
     }
+
+    public static void reset() { wireMockServer.resetAll(); }
 
 }

@@ -1,5 +1,6 @@
 package bdd;
 
+import bdd.setups.WireMockSetup;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import lombok.RequiredArgsConstructor;
@@ -17,20 +18,18 @@ public class CucumberScenarioLifecycle {
     @Autowired
     private CucumberTestContext testContext;
 
+    @Before
+    public void setUp() {
+        log.info("SpringBoot port = " + serverPort);
+        testContext.setQuotationSrvUrl("http://localhost:" + serverPort);
+    }
+
     @After
     public void cleanUp() {
 
+        WireMockSetup.reset();
         testContext.reset();
 
         log.info("Test context clean up completed");
     }
-
-    @Before
-    public void setUp() {
-
-        log.info("### server port = " + serverPort);
-        testContext.setQuotationSrvUrl("http://localhost:" + serverPort);
-    }
-
-
 }
